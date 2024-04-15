@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.highlight-1 {
+  background-color: orange;
+}
+
+.highlight-2 {
+  background-color: yellow;
+}

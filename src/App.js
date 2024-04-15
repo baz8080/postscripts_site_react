@@ -16,6 +16,7 @@ import {
   WithSearch
 } from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
+import { Link } from 'react-router-dom';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 
 const connector = new ElasticsearchAPIConnector({
@@ -23,7 +24,6 @@ const connector = new ElasticsearchAPIConnector({
   apiKey: process.env.REACT_APP_ES_API_KEY,
   index: "podcasts"
 });
-
 
 
 const todayMs = Date.now();
@@ -41,7 +41,6 @@ fiveYearsAgo.setUTCFullYear(todayDate.getUTCFullYear() - 5)
 let tenYearsAgo = new Date(todayMs)
 tenYearsAgo.setUTCFullYear(todayDate.getUTCFullYear() - 10)
 
-
 const config = {
 
   searchQuery: {
@@ -50,14 +49,20 @@ const config = {
       episode_transcript: {}
     },
     result_fields: {
+      _id: {
+        raw: {}
+      },
       podcast_title: {
         raw: {}
       },
       episode_title: {
         raw: {}
       },
+      episode_image: {
+        raw: {}
+      },
       episode_transcript: {
-        snippet: {size: 3200, fallback:true}
+        snippet: { size: 400, fallback: true }
       }
     },
     disjunctiveFacets: ["podcast_title.keyword", "podcast_type.keyword", "episode_type.keyword", "episode_published_on"],
@@ -108,30 +113,72 @@ const config = {
   alwaysSearchOnInitialLoad: false
 };
 
+
+const CustomResultView = ({
+  result,
+  rst,
+}) => (
+  <li className="sui-result">
+    <div className="sui-result__header">
+      <h3>
+        <Link
+          to={{
+            pathname: `/detail/${result.id.raw}`,
+            search: `?query=${encodeURIComponent(rst.resultSearchTerm)}`,
+          }}
+        >{result.podcast_title.raw}</Link>
+      </h3>
+    </div>
+    <div className="sui-result__body">
+      {/* use 'raw' values of fields to access values without snippets */}
+      <div className="sui-result__image">
+        <img src={result.episode_image.raw} alt="" />
+      </div>
+      {/* Use the 'snippet' property of fields with dangerouslySetInnerHtml to render snippets */}
+      <div
+        className="sui-result__details"
+        dangerouslySetInnerHTML={{ __html: result.episode_transcript.snippet }}
+      ></div>
+    </div>
+  </li>
+);
+
+
+const withCustomProps = (Component, customProps) => {
+  // Return a new component that wraps the original component and passes custom props
+  return (props) => <Component {...props} {...customProps} />;
+};
+
 function App() {
 
   return (
     <SearchProvider config={config}>
-      <WithSearch mapContextToProps={({ wasSearched }) => ({ wasSearched })}>
-        {({ wasSearched }) => {
+      <WithSearch mapContextToProps={({ wasSearched, resultSearchTerm }) => ({ wasSearched, resultSearchTerm })}>
+
+        {({ wasSearched, resultSearchTerm }) => {
+
+          console.log(resultSearchTerm)
+          const customProps = { rst: {resultSearchTerm} };
+          const CustomResultViewWithProps = withCustomProps(CustomResultView, customProps);
+
           return (
             <div className="App">
               <ErrorBoundary>
                 <Layout
                   header={
-                    <SearchBox/>
+                    <SearchBox />
                   }
                   sideContent={
                     <div>
                       {wasSearched && <Sorting label={"Sort by"} sortOptions={[]} />}
-                      <Facet key={"1"} field={"podcast_title.keyword"} label={"ptitle"} />
-                      <Facet key={"2"} field={"podcast_type.keyword"} label={"pttpe"} />
-                      <Facet key={"3"} field={"episode_type.keyword"} label={"etype"} />
-                      <Facet key={"4"} field={"episode_duration"} label={"duration"} />
-                      <Facet key={"5"} field={"episode_published_on"} label={"published"} />
+                      <Facet key={"1"} field={"podcast_title.keyword"} label={"Pod Title"} />
+                      <Facet key={"2"} field={"podcast_type.keyword"} label={"Pod Type"} />
+                      <Facet key={"3"} field={"episode_type.keyword"} label={"Episode Keywords"} />
+                      <Facet key={"4"} field={"episode_duration"} label={"Duration"} />
+                      <Facet key={"5"} field={"episode_published_on"} label={"Published"} />
                     </div>
                   }
-                  bodyContent={<Results shouldTrackClickThrough={true} />}
+                  bodyContent={<Results shouldTrackClickThrough={true} resultView={CustomResultViewWithProps} />}
                   bodyHeader={
                     <React.Fragment>
                       {wasSearched && <PagingInfo />}
