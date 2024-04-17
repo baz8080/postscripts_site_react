@@ -39,25 +39,20 @@ function DetailPage() {
     }, [params.resourceId]);
 
     useEffect(() => {
-        console.log("Query:", query); // Print params.query
+        console.log("Query:", query);
 
-        // Define a list of stop words
         const stopWords = ["the", "of", "and", "to", "in", "a", "for", "on", "with", "at", "by", "from"];
 
         if (podcastData && query && contentRef.current) {
             const instance = new Mark(contentRef.current);
-            instance.unmark(); // Clear previous highlights
+            instance.unmark(); 
 
-            // Mark the whole phrase
             instance.mark(query, {
                 separateWordSearch: false,
                 className: "highlight-1",
             });
 
-            // Split the query into individual words
             const words = query.split(" ");
-
-            // Mark individual words separately, excluding stop words
             words.forEach(word => {
                 if (!stopWords.includes(word.toLowerCase())) {
                     instance.mark(word, {
@@ -69,26 +64,24 @@ function DetailPage() {
                 }
             });
 
-            // Find the first marked element with class "highlight-2"
             const firstMarkedElement = document.querySelector(".highlight-1");
 
-            // Scroll to the first marked element
             if (firstMarkedElement) {
                 firstMarkedElement.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         }
     }, [podcastData, query]);
 
-
-
     return (
         <div>
             {podcastData ? (
                 <div ref={contentRef}>
                     <h2>{podcastData._source.podcast_title}</h2>
+                    <div id="episode-transcript">
                     {podcastData._source.episode_transcript.split('\n\n').map((line, index) => (
                         <p key={index}>{line}</p>
-                    ))}
+                    ))} 
+                    </div>
                 </div>
             ) : (
                 <p>Loading...</p>

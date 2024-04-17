@@ -46,6 +46,7 @@ const config = {
   searchQuery: {
     search_fields: {
       episode_title: {},
+      episode_summary: {},
       episode_transcript: {}
     },
     result_fields: {
@@ -65,11 +66,9 @@ const config = {
         snippet: { size: 400, fallback: true }
       }
     },
-    disjunctiveFacets: ["podcast_title.keyword", "podcast_type.keyword", "episode_type.keyword", "episode_published_on"],
+    disjunctiveFacets: ["podcast_title.keyword", "episode_published_on", "podcast_collection.keyword, all_tags.keyword"],
     facets: {
       "podcast_title.keyword": { type: "value" },
-      "podcast_type.keyword": { type: "value" },
-      "episode_type.keyword": { type: "value" },
       episode_published_on: {
         type: "range",
         ranges: [
@@ -106,7 +105,9 @@ const config = {
           { from: 3601, to: 5400, name: "Long" },
           { from: 5401, name: "Very long" }
         ]
-      }
+      },
+      "podcast_collection.keyword": { type: "value" },
+      "all_tags.keyword": { type: "value" },
     }
   },
   apiConnector: connector,
@@ -143,7 +144,6 @@ const CustomResultView = ({
   </li>
 );
 
-
 const withCustomProps = (Component, customProps) => {
   // Return a new component that wraps the original component and passes custom props
   return (props) => <Component {...props} {...customProps} />;
@@ -158,7 +158,7 @@ function App() {
         {({ wasSearched, resultSearchTerm }) => {
 
           console.log(resultSearchTerm)
-          const customProps = { rst: {resultSearchTerm} };
+          const customProps = { rst: { resultSearchTerm } };
           const CustomResultViewWithProps = withCustomProps(CustomResultView, customProps);
 
           return (
@@ -171,11 +171,12 @@ function App() {
                   sideContent={
                     <div>
                       {wasSearched && <Sorting label={"Sort by"} sortOptions={[]} />}
-                      <Facet key={"1"} field={"podcast_title.keyword"} label={"Pod Title"} />
-                      <Facet key={"2"} field={"podcast_type.keyword"} label={"Pod Type"} />
-                      <Facet key={"3"} field={"episode_type.keyword"} label={"Episode Keywords"} />
+                      <Facet key={"1"} field={"podcast_collection.keyword"} label={"Collection"} />
+                      <Facet key={"2"} field={"podcast_title.keyword"} label={"Pod Title"} />
+                      <Facet key={"3"} field={"all_tags.keyword"} label={"Tags"} />
                       <Facet key={"4"} field={"episode_duration"} label={"Duration"} />
                       <Facet key={"5"} field={"episode_published_on"} label={"Published"} />
+                      
                     </div>
                   }
                   bodyContent={<Results shouldTrackClickThrough={true} resultView={CustomResultViewWithProps} />}
