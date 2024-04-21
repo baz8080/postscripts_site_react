@@ -2,18 +2,23 @@ version: "3"
 services:
   node:
     user: node
-    image: "node:20.12.1"
-    working_dir: $HOME/Code/podscripts_site_react
+    image: "podscripts-react:latest"
+    working_dir: /home/node/code/podscripts_site_react 
     environment:
       - NODE_ENV=production
       - NPM_CONFIG_PREFIX=/home/node/.npm-global
       - PATH=$PATH:/home/node/.npm-global/bin
-    volumes:
-      - ./:/$HOME/Code/podscripts_site_react
     expose:
       - "8001"
+    platform: linux/amd64
     ports:
       - "8001:8001"  
     command: >
       sh -c "npm install -g serve &&
              serve -s build -l 8001"
+    networks:
+      - podscripts
+
+networks:
+  podscripts:
+    external: true

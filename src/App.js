@@ -19,12 +19,12 @@ import { Layout } from "@elastic/react-search-ui-views";
 import { Link } from 'react-router-dom';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 
+
 const connector = new ElasticsearchAPIConnector({
-  host: "https://nasty.local:9200",
+  host: process.env.REACT_APP_ES_HOST_DEV,
   apiKey: process.env.REACT_APP_ES_API_KEY,
   index: "podcasts"
 });
-
 
 const todayMs = Date.now();
 const todayDate = new Date(todayMs)
@@ -157,7 +157,6 @@ function App() {
 
         {({ wasSearched, resultSearchTerm }) => {
 
-          console.log(resultSearchTerm)
           const customProps = { rst: { resultSearchTerm } };
           const CustomResultViewWithProps = withCustomProps(CustomResultView, customProps);
 
