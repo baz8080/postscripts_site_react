@@ -68,3 +68,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Building images
+
+1. `docker build --platform linux/amd64 -t podscripts-react-linux .`
+2. `docker save -o podscripts-react-linux.tar podscripts-react-linux`
+3. upload image to NAS
+4. Start with the `compose.yml` file.

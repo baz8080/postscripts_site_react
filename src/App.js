@@ -59,11 +59,20 @@ const config = {
       episode_title: {
         raw: {}
       },
+      podcast_image: {
+        raw: {}
+      },
       episode_image: {
+        raw: {}
+      },
+      episode_published_on: {
         raw: {}
       },
       episode_transcript: {
         snippet: { size: 400, fallback: true }
+      },
+      episode_audio_link: {
+        raw: {}
       }
     },
     disjunctiveFacets: ["podcast_title.keyword", "episode_published_on", "podcast_collections.keyword, all_tags.keyword"],
@@ -121,25 +130,42 @@ const CustomResultView = ({
 }) => (
   <li className="sui-result">
     <div className="sui-result__header">
-      <h3>
-        <Link
-          to={{
-            pathname: `/detail/${result.id.raw}`,
-            search: `?query=${encodeURIComponent(rst.resultSearchTerm)}`,
-          }}
-        >{result.podcast_title.raw}</Link>
-      </h3>
-    </div>
-    <div className="sui-result__body">
-      {/* use 'raw' values of fields to access values without snippets */}
-      <div className="sui-result__image">
-        <img src={result.episode_image.raw} alt="" />
+      <div className="sui-result__title">
+        <span>{result.podcast_title.raw}</span>{" - "}
+        <span>
+          <Link
+            to={{
+              pathname: `/detail/${result.id.raw}`,
+              search: `?query=${encodeURIComponent(rst.resultSearchTerm)}`,
+            }}
+          >{result.episode_title.raw}</Link>
+        </span>
       </div>
-      {/* Use the 'snippet' property of fields with dangerouslySetInnerHtml to render snippets */}
+      
+    </div>
+
+    <div className="sui-result__body">  
+      <div className="sui-result__image">
+        <img src={result.episode_image.raw || result.podcast_image.raw} alt="" />
+      </div>
+      
       <div
         className="sui-result__details"
-        dangerouslySetInnerHTML={{ __html: result.episode_transcript.snippet }}
-      ></div>
+      >
+        <p>
+          <span className="sui-result__key">Released on</span>{" "}
+          <span className="sui-result__value">{result.episode_published_on.raw}</span>
+        </p>
+        <p>
+          <span className="sui-result__key">Transcript</span>{" "}
+          <span className="sui-result__value" dangerouslySetInnerHTML={{ __html: result.episode_transcript.snippet }}></span>
+        </p>
+        <br/>    
+        <audio controls preload='none'>
+          <source src={result.episode_audio_link.raw} type="audio/mpeg" />
+        </audio>
+
+      </div>
     </div>
   </li>
 );

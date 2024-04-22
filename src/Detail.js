@@ -14,7 +14,7 @@ function DetailPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://nasty.local:9200/podcasts/_doc/${params.resourceId}`, {
+                const response = await fetch(`http://nasty.local:9200/podcasts/_doc/${params.resourceId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': 'ApiKey ' + process.env.REACT_APP_ES_API_KEY,
