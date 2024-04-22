@@ -21,7 +21,7 @@ import "@elastic/react-search-ui-views/lib/styles/styles.css";
 
 
 const connector = new ElasticsearchAPIConnector({
-  host: process.env.REACT_APP_ES_HOST_DEV,
+  host: process.env.REACT_APP_ES_HOST,
   apiKey: process.env.REACT_APP_ES_API_KEY,
   index: "podcasts"
 });
@@ -66,7 +66,7 @@ const config = {
         snippet: { size: 400, fallback: true }
       }
     },
-    disjunctiveFacets: ["podcast_title.keyword", "episode_published_on", "podcast_collection.keyword, all_tags.keyword"],
+    disjunctiveFacets: ["podcast_title.keyword", "episode_published_on", "podcast_collections.keyword, all_tags.keyword"],
     facets: {
       "podcast_title.keyword": { type: "value" },
       episode_published_on: {
@@ -106,7 +106,7 @@ const config = {
           { from: 5401, name: "Very long" }
         ]
       },
-      "podcast_collection.keyword": { type: "value" },
+      "podcast_collections.keyword": { type: "value" },
       "all_tags.keyword": { type: "value" },
     }
   },
@@ -170,7 +170,7 @@ function App() {
                   sideContent={
                     <div>
                       {wasSearched && <Sorting label={"Sort by"} sortOptions={[]} />}
-                      <Facet key={"1"} field={"podcast_collection.keyword"} label={"Collection"} />
+                      <Facet key={"1"} field={"podcast_collections.keyword"} label={"Collection"} />
                       <Facet key={"2"} field={"podcast_title.keyword"} label={"Pod Title"} />
                       <Facet key={"3"} field={"all_tags.keyword"} label={"Tags"} />
                       <Facet key={"4"} field={"episode_duration"} label={"Duration"} />
