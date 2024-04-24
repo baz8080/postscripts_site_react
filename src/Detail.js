@@ -39,8 +39,6 @@ function DetailPage() {
     }, [params.resourceId]);
 
     useEffect(() => {
-        console.log("Query:", query);
-
         const stopWords = ["the", "of", "and", "to", "in", "a", "for", "on", "with", "at", "by", "from"];
 
         if (podcastData && query && contentRef.current) {
@@ -73,20 +71,60 @@ function DetailPage() {
     }, [podcastData, query]);
 
     return (
-        <div>
+        <article className="mb-4 mt-4">
+        <div className="container px-4 px-lg-5">
             {podcastData ? (
-                <div ref={contentRef}>
-                    <h2>{podcastData._source.podcast_title}</h2>
-                    <div id="episode-transcript">
-                    {podcastData._source.episode_transcript.split('\n\n').map((line, index) => (
-                        <p key={index}>{line}</p>
-                    ))} 
-                    </div>
+                <div className="row gx-4 gx-lg-5 justify-content-center">
+                    <div className="col-md-10 col-lg-8 col-xl-7" ref={contentRef} id="episode-transcript">
+                        <h2>{podcastData._source.episode_title}</h2>
+                        <table className="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Attribute</th>
+                                <th scope="col">Value</th>
+                            </tr>    
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Podcast title</td>
+                                    <td>{podcastData._source.podcast_title}</td>
+                                </tr>
+                                <tr>
+                                    <td>Published on</td>
+                                    <td>{podcastData._source.episode_published_on}</td>
+                                </tr>
+                                <tr>
+                                    <td>Episode link</td>
+                                    <td><a href={podcastData._source.episode_web_link}>link</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Audio</td>
+                                    <td>
+                                        <audio controls preload='none'>
+                                            <source src={podcastData._source.episode_audio_link} type="audio/mpeg" />
+                                        </audio>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Summary</h3>
+                        <p dangerouslySetInnerHTML={{__html: podcastData._source.episode_summary}} /> 
+                            
+                        <h3>Transcript</h3>
+                        {podcastData._source.episode_transcript.split('\n\n').map((line, index) => (
+                            <p key={index}>{line}</p>
+                        ))} 
+                        
+                        
+                    </div>    
                 </div>
+                
             ) : (
                 <p>Loading...</p>
             )}
         </div>
+        </article>
     );
 }
 

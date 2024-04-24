@@ -161,10 +161,6 @@ const CustomResultView = ({
           <span className="sui-result__value" dangerouslySetInnerHTML={{ __html: result.episode_transcript.snippet }}></span>
         </p>
         <br/>    
-        <audio controls preload='none'>
-          <source src={result.episode_audio_link.raw} type="audio/mpeg" />
-        </audio>
-
       </div>
     </div>
   </li>
