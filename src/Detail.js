@@ -11,6 +11,16 @@ function DetailPage() {
     const [podcastData, setPodcastData] = useState(null);
     const contentRef = useRef(null); // Ref to the content element
 
+    const handleClick = (timeStamp) => {
+        // Your function logic here
+        const audioPlayer = document.getElementById("audioPlayer")
+        audioPlayer.currentTime = (timeStamp / 1000)
+
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -100,7 +110,7 @@ function DetailPage() {
                                 <tr>
                                     <td>Audio</td>
                                     <td>
-                                        <audio controls preload='none'>
+                                        <audio controls preload='metadata' id="audioPlayer">
                                             <source src={podcastData._source.episode_audio_link} type="audio/mpeg" />
                                         </audio>
                                     </td>
@@ -112,14 +122,20 @@ function DetailPage() {
                         <p dangerouslySetInnerHTML={{__html: podcastData._source.episode_summary}} /> 
                             
                         <h3>Transcript</h3>
-                        {podcastData._source.episode_transcript.split('\n\n').map((line, index) => (
-                            <p key={index}>{line}</p>
-                        ))} 
-                        
-                        
+                        {podcastData._source.episode_transcript.split('\n').map((line, index) => {
+                            const firstTabPosition = line.indexOf("\t");
+                            const timeStamp = line.substring(0, firstTabPosition);
+                            const paragraphText = line.substring(firstTabPosition);
+
+                            return (
+                                <div key={index}>
+                                    <button type="button" className="btn btn-link .btn-sm m-0 p-0" onClick={() => handleClick(timeStamp)}>Seek to</button>
+                                    <p>{paragraphText}</p>
+                                </div>
+                            );
+                        })}
                     </div>    
                 </div>
-                
             ) : (
                 <p>Loading...</p>
             )}
