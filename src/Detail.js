@@ -14,7 +14,7 @@ function DetailPage() {
     const handleClick = (timeStamp) => {
         // Your function logic here
         const audioPlayer = document.getElementById("audioPlayer")
-        audioPlayer.currentTime = (timeStamp / 1000)
+        audioPlayer.currentTime = timeStamp
 
         if (audioPlayer.paused) {
             audioPlayer.play();
@@ -106,17 +106,13 @@ function DetailPage() {
                                 <tr>
                                     <td>Episode link</td>
                                     <td><a href={podcastData._source.episode_web_link}>link</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Audio</td>
-                                    <td>
-                                        <audio controls preload='metadata' id="audioPlayer">
-                                            <source src={podcastData._source.episode_audio_link} type="audio/mpeg" />
-                                        </audio>
-                                    </td>
-                                </tr>
+                                </tr> 
                             </tbody>
                         </table>
+
+                        <audio controls preload='metadata' id="audioPlayer" className="audio-player audio">
+                            <source src={"http://nasty.local:9280/" + podcastData._source.episode_relative_mp3_path} type="audio/mpeg" />
+                        </audio>
 
                         <h3>Summary</h3>
                         <p dangerouslySetInnerHTML={{__html: podcastData._source.episode_summary}} /> 
@@ -124,12 +120,12 @@ function DetailPage() {
                         <h3>Transcript</h3>
                         {podcastData._source.episode_transcript.split('\n').map((line, index) => {
                             const firstTabPosition = line.indexOf("\t");
-                            const timeStamp = line.substring(0, firstTabPosition);
+                            const timeStampSeconds = line.substring(0, firstTabPosition) / 1000;
                             const paragraphText = line.substring(firstTabPosition);
 
                             return (
                                 <div key={index}>
-                                    <button type="button" className="btn btn-link .btn-sm m-0 p-0" onClick={() => handleClick(timeStamp)}>Seek to</button>
+                                    <button type="button" className="btn btn-link .btn-sm m-0 p-0" onClick={() => handleClick(timeStampSeconds)}>Seek to {timeStampSeconds} seconds</button>
                                     <p>{paragraphText}</p>
                                 </div>
                             );

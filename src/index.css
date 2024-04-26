@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.audio-player {  
+  position: -webkit-sticky; /* Safari */  
+  position: sticky;  
+  top: 0;
+  z-index: 1000; /* Ensures the player stays on top of other content */  
+  
+}
