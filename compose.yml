@@ -16,9 +16,10 @@ services:
     command: >
       sh -c "npm install -g serve &&
              serve -s build -l 8001"
-    networks:
-      - podscripts
-
-networks:
-  podscripts:
-    external: true
+  podscripts-nginx:
+    image: nginx
+    container_name: podscripts-nginx
+    ports:
+      - "9280:80"
+    volumes:
+      - /volume2/rss_to_whisper:/usr/share/nginx/html:ro
