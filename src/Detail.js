@@ -24,7 +24,7 @@ function DetailPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://nasty.local:9200/podcasts/_doc/${params.resourceId}`, {
+                const response = await fetch(`${process.env.REACT_APP_ES_HOST}/podcasts/_doc/${params.resourceId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': 'ApiKey ' + process.env.REACT_APP_ES_API_KEY,
@@ -111,7 +111,7 @@ function DetailPage() {
                         </table>
 
                         <audio controls preload='metadata' id="audioPlayer" className="audio-player audio">
-                            <source src={"http://nasty.local:9280/" + podcastData._source.episode_relative_mp3_path} type="audio/mpeg" />
+                            <source src={process.env.REACT_APP_FILE_HOST + "/" + podcastData._source.episode_relative_mp3_path} type="audio/mpeg" />
                         </audio>
 
                         <h3>Summary</h3>
